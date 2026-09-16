@@ -29,9 +29,16 @@ async function startBot(){
   sock.ev.on('messages.upsert', async ({messages})=>{
     const msg = messages[0];
     if(!msg.message || msg.key.fromMe) return;
-    const text = msg.message.conversation || msg.message.extendedTextMessage?.text || '';
-    if(text.toLowerCase()==='hi'){
-      await sock.sendMessage(msg.key.remoteJid, { text: 'Hello! Bot online hai' });
+    const jid = msg.key.remoteJid;
+    const text = (msg.message.conversation || msg.message.extendedTextMessage?.text || '').toLowerCase().trim();
+    const replies = {
+      'hi': 'Hello! Main kya help kar sakta hu?',
+      'hello': 'Hello! verything is ok na?',
+      'kaise ho': 'Main badhiya hu! Aap batao, main kya help kar sakta hu?',
+      'hello kaise ho': 'Hello! Main badhiya hu. Batao main kya help kar sakta hu?',
+    };
+    if(replies[text]){
+      await sock.sendMessage(jid, { text: replies[text] });
     }
   });
 }
